@@ -3,8 +3,19 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import ElementUI from 'element-ui'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { fas } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
+import 'element-ui/lib/theme-chalk/index.css'
+import 'font-awesome/css/font-awesome.css'
+
+library.add(fas)
+
+Vue.use(ElementUI)
 Vue.config.productionTip = false
+Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 /* eslint-disable no-new */
 new Vue({
