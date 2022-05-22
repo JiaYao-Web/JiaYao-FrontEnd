@@ -10,13 +10,10 @@
           <img :src="item.img" :alt="item.alt" class="icon" @click="goTo(item.id)">
           <a :href="item.href" class="item-title" style="flex-shrink: 0">{{item.name}}</a>
         </li>
-        <li class="nav-input">
-          <el-input type="text" placeholder="搜索"  v-model="keywords" class="input"></el-input>
-        </li>
         <li>
           <el-button class="button" type="info" style="padding-left: 9px" @click="search">搜索</el-button>
         </li>
-        <li class="nav-li">
+        <li class="nav-li" @click="goToUser">
           <el-avatar class="head" :src="avatar" size="large"></el-avatar>
         </li>
         <li class="nav-dropdown">
@@ -25,8 +22,8 @@
               <i class="el-icon-arrow-down el-icon--right"></i>
             </span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item command="accountInfo">账号信息</el-dropdown-item>
-              <el-dropdown-item command="logout">退出登录</el-dropdown-item>
+              <el-dropdown-item @click.native="goToUserInfo">账号信息</el-dropdown-item>
+              <el-dropdown-item @click.native="logOut">退出登录</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </li>
@@ -84,6 +81,15 @@ export default {
       else if (id === 1) this.$router.push('/favorite')
       else if (id === 2) this.$router.push('/menuIndex')
       else if (id === 3) this.$router.push('/ingredientIndex')
+    },
+    goToUser () {
+      this.$router.push('/user')
+    },
+    goToUserInfo () {
+      this.$router.push('/userInfo')
+    },
+    logOut () {
+      console.log('退出')
     }
   }
 }
@@ -147,11 +153,9 @@ export default {
   margin-top: 17px;
 }
 .button{
-  width: 50px;
+  width: 100px;
   margin-top: 17px;
-}
-.nav-input{
-  margin-left: 80px
+  margin-left: 70px;
 }
 .item-title{
   font-size: 18px;

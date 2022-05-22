@@ -7,30 +7,27 @@
         <!--商品图标-->
         <div class="book-top-card">
           <div class="book-img-wrap">
-            <img src="../../assets/icons/Ingredients.png" alt="商品图片">
+            <img :src="menu.image" alt="菜单图片">
           </div>
           <div class="book-info">
             <div class="book-name">
-              <div class="tag1">Ingredient</div>精选食材
+              <div class="tag1">Category</div>分类
             </div>
             <div>
               <el-card style="margin-top: 10px;max-height: 140px;background: transparent;text-justify: inter-ideograph;overflow: auto;">
                 <div style="color: #6A5ACD">简介</div>
-                <div>{{introduction}}</div>
+                <div>{{menu.introduction}}</div>
               </el-card>
             </div>
           </div>
         </div>
-        <div style="margin-top: -10px;display: flex;justify-content: center;margin-left: 100px">
-          <el-button type="success" @click="uploadIngredient">上传食材</el-button>
-        </div>
         <!--商品信息-->
         <!--没有收藏-->
         <div class="searchBar">
-          <el-empty v-if="favoriteList.length === 0" description="精选食材为空"></el-empty>
+          <el-empty v-if="categoryList.length === 0" description="暂时没有分类信息"></el-empty>
         </div>
         <!--有收藏-->
-        <div v-if="favoriteList.length > 0" class="searchBar">
+        <div v-if="categoryList.length > 0" class="searchBar">
         </div>
       </div>
     </div>
@@ -40,21 +37,17 @@
 <script>
 import NavBar from '../../components/NavBar'
 export default {
-  name: 'IngredientIndex',
+  name: 'Category',
   components: {NavBar},
   data () {
     return {
-      introduction: '精选食材，让你的厨房有无限选择！',
-      favoriteList: []
+      menu: {introduction: '食品分类，在这里你可以看到最全的分类，快来选择你最喜欢的菜单/食材吧', name: '西红柿炒鸡蛋', category: '家常菜', image: require('@/assets/temp/vegatables.jpg'), favorite: 2, like: 2},
+      categoryList: []
     }
   },
   created () {
   },
   methods: {
-    uploadIngredient () {
-      console.log('你好')
-      this.$router.push('/uploadIngredient')
-    }
   }
 }
 </script>
@@ -103,6 +96,12 @@ export default {
 .book-info {
   padding: 0 20px;
   flex: 1;
+  z-index: 1000;
+}
+.book-user-info {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
   z-index: 1000;
 }
 

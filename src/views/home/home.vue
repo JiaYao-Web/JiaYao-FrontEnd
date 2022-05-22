@@ -20,7 +20,9 @@
         <div v-for="(item , index) in recommendMenuList" :key="index" style="width: 25%">
           <div style="margin-top: 20px">
             <el-card class="recommend-card" >
-
+              <img :src="item.img" style="width: 100%;height: 160px;border: solid;color: orange;border-radius: 20px" alt=""/>
+              <div class="recommend-card-img">{{item.name}}</div>
+              <div class="recommend-card-author">By {{item.author}}</div>
             </el-card>
           </div>
         </div>
@@ -32,7 +34,7 @@
         <!--大家都在搜-->
         <div>
           <div class="recommend-title">
-            <div class="choice-title">大家都在搜</div>
+            <div class="choice-title">热门分类</div>
             <router-link class="search-link" to="/search">更多 ></router-link>
           </div>
           <div class="search-content">
@@ -112,13 +114,18 @@ export default {
   },
   data () {
     return {
+      // 轮播图
       swiperList: swiperList,
-      recommendMenuList: [{}, {}, {}, {}, {}, {}, {}, {}],
+      // 推荐菜单列表
+      recommendMenuList: [{img: require('@/assets/temp/potato-si.jpg'), name: '最简单下饭的酸辣土豆丝', author: 'Magic-Shroom'}, {img: '', name: '', author: ''}, {img: '', name: '', author: ''}, {img: '', name: '', author: ''}, {img: '', name: '', author: ''}, {img: '', name: '', author: ''}, {img: '', name: '', author: ''}, {img: '', name: '', author: ''}],
       // eslint-disable-next-line standard/object-curly-even-spacing
-      expertUserList: [{img: require('@/assets/temp/magic_shroom.png'), name: 'Magic_shroom', id: 0, fans: 100, follow: true}, {img: '', name: '', id: 1, fans: 100, follow: false}, {img: '', name: '', id: 2, fans: 100, follow: false },
+      // 美食达人列表
+      expertUserList: [{img: require('@/assets/temp/magic_shroom.png'), name: 'Magic_shroom', id: 0, fans: 100, follow: true}, {img: '', name: '', id: 1, fans: 100, follow: false}, { img: '', name: '', id: 2, fans: 100, follow: false },
         // eslint-disable-next-line standard/object-curly-even-spacing
         {img: '', name: '', id: 3, fans: 100, follow: false }, {img: '', name: '', id: 4, fans: 100, follow: false }, {img: '', name: '', id: 5, fans: 100, follow: false }],
-      commonSearchList: [{name: '小吃'}, {name: '主食'}, {name: '烘焙'}, {name: '红烧肉'}, {name: '凉菜'}, {name: '早餐'}, {name: '红烧茄子'}, {name: '酸菜鱼'}],
+      // 经常搜索列表
+      commonSearchList: [{name: '小吃'}, {name: '主食'}, {name: '烘焙'}, {name: '饮品'}, {name: '凉菜'}, {name: '早餐'}, {name: '煎炸'}, {name: '粤菜'}],
+      // 食材列表
       ingredientList: [{img: require('@/assets/temp/potato.jpg'), name: '土豆'}, {img: '', name: '牛肉'}, {img: '', name: '鱼'}, {img: '', name: '白菜'}, {img: '', name: '茄子'}, {img: '', name: '鲍鱼'}, {img: '', name: '山药'}, {img: '', name: '柿子'}, {img: '', name: '羊肉'}, {img: '', name: '菊花'}]
     }
   }
@@ -161,6 +168,14 @@ export default {
 .recommend-card{
   height: 250px;
   margin-left: 20px
+}
+.recommend-card-img{
+  margin-top: 7px;
+  font-family: 'Arial Narrow',serif;
+}
+.recommend-card-author{
+  margin-top: 10px;
+  font-family: 'Brush Script MT',serif
 }
 /*美食达人*/
 .expert-title{
@@ -225,6 +240,7 @@ export default {
 .search-to-link{
   text-decoration: none;
   color: black;
+  font-family: "Copperplate Gothic Light",serif;
 }
 .search-to-link:hover{
   color: rgb(242, 206, 43)
@@ -269,9 +285,11 @@ export default {
 .ingredient-img{
   height: 140px;
   width: 140px;
+  border: solid;
 }
 .ingredient-name{
   text-decoration: none;
   color: black;
+  font-family: "ERS v2 Natural Events",serif;
 }
 </style>

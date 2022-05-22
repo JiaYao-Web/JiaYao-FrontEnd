@@ -28,7 +28,8 @@ export default {
   },
   methods: {
     search () {
-      console.log(this.input)
+      if (this.input === '') location.reload()
+      else this.$router.push('/searchDetail')
     }
   }
 }

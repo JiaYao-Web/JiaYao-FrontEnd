@@ -45,14 +45,50 @@ export default new Router({
       component: () => import('@/views/ingredient/index')
     },
     {
+      path: '/ingredient',
+      name: 'Ingredient',
+      component: () => import('@/views/ingredient/ingredient')
+    },
+    {
+      path: '/uploadIngredient',
+      name: 'UploadIngredient',
+      component: () => import('@/views/ingredient/uploadIngredient')
+    },
+    {
       path: '/menuIndex',
       name: 'MenuIndex',
       component: () => import('@/views/menu/index')
     },
     {
+      path: '/menu',
+      name: 'Menu',
+      component: () => import('@/views/menu/menu')
+    },
+    {
+      path: '/uploadMenu',
+      name: 'UploadMenu',
+      component: () => import('@/views/menu/uploadMenu')
+    },
+    {
+      path: '/category',
+      name: 'Category',
+      component: () => import('@/views/category/category')
+    },
+    // 用户信息相关
+    {
       path: '/favorite',
       name: 'Favorite',
       component: () => import('@/views/favorite/favorite')
+    },
+    {
+      path: '/user',
+      name: 'User',
+      component: () => import('@/views/userInfo/user')
+    },
+    {
+      path: '/userInfo',
+      name: 'UserInfo',
+      component: () => import('@/views/userInfo/userInfo')
     }
   ]
 })
