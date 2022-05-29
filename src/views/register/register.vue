@@ -9,7 +9,7 @@
         <el-col>
           <el-form ref="RegisterForm" :model="form" :rules="rules" label-width="70px" :hide-required-asterisk="true" size="medium" class="Register_Form">
             <el-form-item label="用户名" prop="username" class="blackItem">
-              <el-input v-model="form.username" placeholder="请输入用户名" clearable></el-input>
+              <el-input v-model="form.name" placeholder="请输入用户名" clearable></el-input>
             </el-form-item>
             <el-form-item label="密码" prop="password" class="blackItem">
               <el-input v-model="form.password" showPassword placeholder="请输入密码" clearable></el-input>
@@ -20,21 +20,21 @@
             <el-form-item label="邮箱" prop="email" class="blackItem">
               <el-row type="flex">
                 <el-input v-model="form.email" placeholder="请输入邮箱" clearable></el-input>
-                <el-button type="primary" plain :disabled="isOK">{{ timeCnt }}</el-button>
+<!--                <el-button type="primary" plain :disabled="isOK">{{ timeCnt }}</el-button>-->
               </el-row>
             </el-form-item>
-            <el-form-item label="验证码" prop="verifyEmail" class="blackItem">
-              <el-input v-model="form.verifyEmail" placeholder="请输入验证码" clearable></el-input>
-            </el-form-item>
+<!--            <el-form-item label="验证码" prop="verifyEmail" class="blackItem">-->
+<!--              <el-input v-model="form.verifyEmail" placeholder="请输入验证码" clearable></el-input>-->
+<!--            </el-form-item>-->
 
             <el-row type="flex" justify="center" style="margin: 0 0 10px 0">
-              <el-button size="medium" round style="width: 70%" type="primary" class="Register_Button">注册</el-button>
+              <el-button @click="confirmRegister" size="medium" round style="width: 70%" type="primary" class="Register_Button" >注册</el-button>
             </el-row>
           </el-form>
         </el-col>
       </el-row>
       <el-row type="flex" justify="center">
-        <router-link to="/login">
+        <router-link to="/">
           <el-link :underline="false" style="color: white;margin-left: 20px">返回</el-link>
         </router-link>
       </el-row>
@@ -43,6 +43,7 @@
 </template>
 
 <script>
+import {register} from '../../api/registerAPI'
 
 export default {
   name: 'Register',
@@ -54,14 +55,13 @@ export default {
       isOK: true,
       cnthandler: null,
       form: {
-        username: '',
+        name: '',
         password: '',
         checkPassword: '',
-        email: '',
-        verifyEmail: ''
+        email: ''
       },
       rules: {
-        username: [
+        name: [
           {required: true, message: '请输入用户名', trigger: 'blur'},
           {
             max: 10,
@@ -112,6 +112,9 @@ export default {
       }
     }
   },
+  created () {
+    if (window.sessionStorage.getItem('MyAuthentication') !== null) this.$router.push('/index')
+  },
   methods: {
     cnt: function () {
       this.cnthandler = setTimeout(() => {
@@ -124,6 +127,20 @@ export default {
         this.timeCnt--
         this.cnt()
       }, 1000)
+    },
+    confirmRegister () {
+      const param = {email: this.form.email, password: require('js-sha256').sha256(this.form.password), name: this.form.name}
+      register(param).then(res => {
+        if (res.data.status) {
+          this.$message({
+            message: '注册成功',
+            type: 'success'
+          })
+          this.$router.push('/')
+        } else {
+          this.$message.error(res.data.msg)
+        }
+      })
     }
   }
 }

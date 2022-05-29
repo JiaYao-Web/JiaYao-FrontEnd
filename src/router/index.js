@@ -10,12 +10,12 @@ Router.prototype.push = function push (location) {
 export default new Router({
   routes: [
     {
-      path: '/',
+      path: '/index',
       name: 'Home',
       component: () => import('@/views/home/home')
     },
     {
-      path: '/login',
+      path: '/',
       name: 'Login',
       component: () => import('@/views/login/login')
     },

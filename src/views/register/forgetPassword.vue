@@ -13,12 +13,7 @@
               <el-form-item label="邮箱" prop="email" class="blackItem">
                 <el-row type="flex">
                   <el-input v-model="form.email" placeholder="请输入邮箱" clearable></el-input>
-                  <el-button type="primary" plain :disabled="isOK">{{ timeCnt }}</el-button>
                 </el-row>
-              </el-form-item>
-
-              <el-form-item label="验证码" prop="verifyEmail" class="blackItem">
-                <el-input v-model="form.verifyEmail" placeholder="请输入验证码" clearable></el-input>
               </el-form-item>
               <el-form-item label="新密码" prop="password" class="blackItem">
                 <el-input v-model="form.password" showPassword placeholder="请输入新密码" clearable></el-input>
@@ -27,13 +22,13 @@
                 <el-input v-model="form.checkPassword" showPassword placeholder="请再次输入密码" clearable></el-input>
               </el-form-item>
               <el-row type="flex" justify="center" style="margin: 0px 0 10px 0px">
-                <el-button class="buttonColor" size="medium" round style="width: 70%;margin-left: 30px" type="primary">找回</el-button>
+                <el-button class="buttonColor" @click="confirmFindBack" size="medium" round style="width: 70%;margin-left: 30px" type="primary">找回</el-button>
               </el-row>
             </el-form>
           </el-col>
         </el-row>
         <el-row type="flex" justify="center">
-          <router-link to="/login"><el-link :underline="false" style="color:white;margin-left: 30px">返回</el-link>
+          <router-link to="/"><el-link :underline="false" style="color:white;margin-left: 30px">返回</el-link>
           </router-link>
         </el-row>
       </el-card>
@@ -53,8 +48,7 @@ export default {
       form: {
         password: '',
         checkPassword: '',
-        email: '',
-        verifyEmail: ''
+        email: ''
       },
 
       rules: {
@@ -88,6 +82,14 @@ export default {
           { required: true, message: '请输入验证码', trigger: 'change' }
         ]
       }
+    }
+  },
+  created () {
+    if (window.sessionStorage.getItem('MyAuthentication') !== null) this.$router.push('/index')
+  },
+  methods: {
+    confirmFindBack () {
+      console.log('修改密码')
     }
   }
 }

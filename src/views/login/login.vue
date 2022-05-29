@@ -20,20 +20,20 @@
         </el-row>
 
         <el-row type="flex" justify="center" style="margin: 0 0 10px 0">
-          <el-button class="buttonColor" @click="login" size="medium" round style="width: 280px" type="primary">登录</el-button>
+          <el-button class="buttonColor" @click="confirmLogin" size="medium" round style="width: 280px" type="primary">登录</el-button>
         </el-row>
 
         <el-row style="text-align: center;">
-          <el-col :span="8" :offset="3">
+          <el-col>
             <router-link :to="'/register'">
               <el-link :underline="false" style="color: white">注册账号</el-link>
             </router-link>
           </el-col>
-          <el-col :span="12">
-            <router-link :to="'/forgetPassword'">
-              <el-link :underline="false" style="color: white">找回密码</el-link>
-            </router-link>
-          </el-col>
+<!--          <el-col :span="12">-->
+<!--            <router-link :to="'/forgetPassword'">-->
+<!--              <el-link :underline="false" style="color: white">找回密码</el-link>-->
+<!--            </router-link>-->
+<!--          </el-col>-->
         </el-row>
 
       </el-card>
@@ -42,6 +42,8 @@
 </template>
 
 <script>
+import {login} from '../../api/loginAPI'
+
 export default {
   name: 'Login',
   data () {
@@ -52,10 +54,20 @@ export default {
       }
     }
   },
+  created () {
+    if (window.sessionStorage.getItem('MyAuthentication') !== null) this.$router.push('/index')
+  },
   methods: {
-    login () {
-      // 暂时仅做跳转
-      this.$router.push('/')
+    confirmLogin () {
+      const param = {email: this.form.email, password: require('js-sha256').sha256(this.form.password)}
+      login(param).then(res => {
+        console.log(res)
+        if (!res.data.status) this.$message.error(res.data.msg)
+        else {
+          sessionStorage.setItem('MyAuthentication', res.data.msg)
+          this.$router.push('/index')
+        }
+      })
     }
   }
 }
