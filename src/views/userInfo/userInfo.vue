@@ -30,17 +30,17 @@
               multiple :limit="1" :auto-upload= "false" :file-list="fileList" style="margin-top: 50px" accept=".png,.jpg">
               <el-button size="small" type="primary">点击上传</el-button>
             </el-upload>
-            <el-button type="success" style="margin-top: 50px">确认修改</el-button>
+            <el-button type="success" style="margin-top: 50px" @click="confirmChangeImage">确认修改</el-button>
           </div>
           <!--修改用户名-->
           <div style="margin-left: 200px">
             <div style="font-size: 18px;font-weight: bolder">修改用户名</div>
             <el-form :label-position="labelPosition" label-width="80px" :model="nameForm" style="margin-top: 100px">
-              <el-form-item label="原昵称">
+              <el-form-item label="新昵称">
                 <el-input v-model="nameForm.newName" clearable></el-input>
               </el-form-item>
             </el-form>
-            <el-button type="success" style="margin-top: 87px">确认修改</el-button>
+            <el-button type="success" style="margin-top: 87px" @click="confirmChangeName">确认修改</el-button>
           </div>
           <!--修改密码-->
           <div style="margin-left: 200px">
@@ -53,7 +53,7 @@
                 <el-input v-model="passwordForm.newPassword"  showPassword clearable></el-input>
               </el-form-item>
             </el-form>
-            <el-button type="success" style="margin-top: 60px">确认修改</el-button>
+            <el-button type="success" style="margin-top: 60px" @click="confirmChangePassword">确认修改</el-button>
           </div>
         </div>
       </div>
@@ -63,12 +63,14 @@
 
 <script>
 import NavBar from '../../components/NavBar'
+import {getMyInfo, changePassword, changeName, changeImage} from '../../api/userInfo'
+
 export default {
   name: 'UserInfo',
   components: {NavBar},
   data () {
     return {
-      user: {id: '', name: 'Magic_shroom', email: '1053790247@qq.com', image: require('@/assets/temp/magic_shroom.png')},
+      user: {},
       labelPosition: 'right',
       // 修改头像
       fileList: [],
@@ -84,6 +86,10 @@ export default {
     }
   },
   created () {
+    getMyInfo().then(res => {
+      this.user = res.data
+      this.$forceUpdate()
+    })
   },
   methods: {
     handleRemove () {
@@ -99,10 +105,44 @@ export default {
       } else {
         this.$message.error('请上传正确类型的文件')
       }
-      console.log(this.fileList.length)
     },
     beforeRemove (file, fileList) {
       return this.$confirm(`确定移除 ${file.name}？`)
+    },
+    confirmChangePassword () {
+      const params = {userId: this.user.userId, oldPassword: require('js-sha256').sha256(this.passwordForm.oldPassword), newPassword: require('js-sha256').sha256(this.passwordForm.newPassword)}
+      changePassword(params).then(res => {
+        if (!res.data.status) this.$message.error(res.data.msg)
+        else {
+          this.$message.success(res.data.msg)
+          this.passwordForm.newPassword = ''
+          this.passwordForm.oldPassword = ''
+        }
+      })
+    },
+    confirmChangeName () {
+      const params = {name: this.nameForm.newName}
+      changeName(params).then(res => {
+        if (!res.data.status) this.$message.error(res.data.msg)
+        else {
+          this.$message.success(res.data.msg)
+          this.user.name = this.nameForm.newName
+          this.nameForm.newName = ''
+        }
+      })
+    },
+    confirmChangeImage () {
+      const formData = new FormData()
+      formData.append('FILE', this.fileList[0].raw)
+      changeImage(formData).then(res => {
+        if (!res.data.status) this.$message.error(res.data.msg)
+        else {
+          this.$message.success('修改成功')
+          this.user.image = res.data.msg
+          this.fileList = []
+          location.reload()
+        }
+      })
     }
   }
 }

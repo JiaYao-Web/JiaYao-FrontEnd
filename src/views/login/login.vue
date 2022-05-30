@@ -29,11 +29,6 @@
               <el-link :underline="false" style="color: white">注册账号</el-link>
             </router-link>
           </el-col>
-<!--          <el-col :span="12">-->
-<!--            <router-link :to="'/forgetPassword'">-->
-<!--              <el-link :underline="false" style="color: white">找回密码</el-link>-->
-<!--            </router-link>-->
-<!--          </el-col>-->
         </el-row>
 
       </el-card>
@@ -61,7 +56,6 @@ export default {
     confirmLogin () {
       const param = {email: this.form.email, password: require('js-sha256').sha256(this.form.password)}
       login(param).then(res => {
-        console.log(res)
         if (!res.data.status) this.$message.error(res.data.msg)
         else {
           sessionStorage.setItem('MyAuthentication', res.data.msg)

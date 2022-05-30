@@ -14,7 +14,7 @@
           <el-button class="button" type="info" style="padding-left: 9px" @click="search">搜索</el-button>
         </li>
         <li class="nav-li" @click="goToUser">
-          <el-avatar class="head" :src="avatar" size="large"></el-avatar>
+          <el-avatar class="head" :src="user.image" size="large"></el-avatar>
         </li>
         <li class="nav-dropdown">
           <el-dropdown class="drop" trigger="click" style="color: white">
@@ -34,11 +34,12 @@
 </template>
 
 <script>
+import {getMyInfo} from '../api/userInfo'
+
 export default {
   name: 'NavBar',
   data () {
     return {
-      avatar: 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
       keywords: '',
       items: [
         {
@@ -69,8 +70,14 @@ export default {
           href: '#/ingredientIndex',
           alt: '食材'
         }
-      ]
+      ],
+      user: {}
     }
+  },
+  created () {
+    getMyInfo().then(res => {
+      this.user = res.data
+    })
   },
   methods: {
     search () {
@@ -83,13 +90,14 @@ export default {
       else if (id === 3) this.$router.push('/ingredientIndex')
     },
     goToUser () {
-      this.$router.push('/user')
+      this.$router.push(`/user?id=${this.user.userId}`)
     },
     goToUserInfo () {
       this.$router.push('/userInfo')
     },
     logOut () {
-      console.log('退出')
+      sessionStorage.removeItem('MyAuthentication')
+      this.$router.push('/')
     }
   }
 }
