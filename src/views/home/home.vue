@@ -35,7 +35,7 @@
         <div>
           <div class="recommend-title">
             <div class="choice-title">热门分类</div>
-            <router-link class="search-link" to="/search">更多 ></router-link>
+            <router-link class="search-link" to="/category">更多 ></router-link>
           </div>
           <div class="search-content">
             <div class="search-card">
@@ -128,6 +128,9 @@ export default {
       // 食材列表
       ingredientList: [{img: require('@/assets/temp/potato.jpg'), name: '土豆'}, {img: '', name: '牛肉'}, {img: '', name: '鱼'}, {img: '', name: '白菜'}, {img: '', name: '茄子'}, {img: '', name: '鲍鱼'}, {img: '', name: '山药'}, {img: '', name: '柿子'}, {img: '', name: '羊肉'}, {img: '', name: '菊花'}]
     }
+  },
+  created () {
+    if (window.sessionStorage.getItem('MyAuthentication') === null) this.$router.push('/')
   }
 }
 </script>

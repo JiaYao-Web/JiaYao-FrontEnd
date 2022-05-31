@@ -86,6 +86,7 @@ export default {
     }
   },
   created () {
+    if (window.sessionStorage.getItem('MyAuthentication') === null) this.$router.push('/')
     getMyInfo().then(res => {
       this.user = res.data
       this.$forceUpdate()

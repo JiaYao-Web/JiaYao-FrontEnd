@@ -29,7 +29,9 @@
                       <el-input class="book-info-input" v-model="formData.name" clearable></el-input>
                     </el-form-item>
                     <el-form-item label="食材分类">
-                      <el-input class="book-info-input" v-model="formData.category" clearable></el-input>
+                      <el-select class="book-info-input" v-model="formData.category" placeholder="请选择">
+                        <el-option  v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                      </el-select>
                     </el-form-item>
                     <el-form-item label="食材简介">
                       <el-input class="book-info-input" v-model="formData.introduction" clearable type="textarea" :rows="3"></el-input>
@@ -43,9 +45,9 @@
                   <div>
                     <el-upload
                       list-type="picture-card" action="" :on-preview="handlePreview" :on-remove="handleRemove" :on-change = "handleChange" :before-remove="beforeRemove"
-                      multiple :limit="5" :auto-upload= "false" :file-list="fileList" style="margin-top: 50px" accept=".png,.jpg">
+                      multiple :limit="1" :auto-upload= "false" :file-list="fileList" style="margin-top: 50px" accept=".png,.jpg">
                       <el-button size="small" type="primary">点击上传</el-button>
-                      <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且最多上传五个文件</div>
+                      <div slot="tip" class="el-upload__tip">只能上传jpg/png文件</div>
                     </el-upload>
                   </div>
                   <el-button  @click="lastStep" style="margin-top: 50px">上一步</el-button>
@@ -74,6 +76,7 @@
 
 <script>
 import NavBar from '../../components/NavBar'
+import {uploadIngredient} from '../../api/ingredientAPI'
 
 export default {
   name: 'UploadIngredient',
@@ -86,15 +89,34 @@ export default {
       formData: {
         category: '',
         name: '',
-        content: '',
         introduction: ''
       },
+      options: [{
+        value: '蔬菜',
+        label: '蔬菜'
+      }, {
+        value: '肉类',
+        label: '肉类'
+      }, {
+        value: '水产',
+        label: '肉类'
+      }, {
+        value: '豆乳蛋类',
+        label: '豆乳蛋类'
+      }, {
+        value: '谷类',
+        label: '谷类'
+      }, {
+        value: '调味料',
+        label: '调味料'
+      }],
       // 步骤二：上传图片
       imageUrl: '',
       fileList: []
     }
   },
   created () {
+    if (window.sessionStorage.getItem('MyAuthentication') === null) this.$router.push('/')
   },
   methods: {
     nextStep () {
@@ -104,13 +126,22 @@ export default {
       this.active--
     },
     submit () {
-      let formData = new FormData()
-      formData.append('formData', new Blob([JSON.stringify(this.formData)], {type: 'application/json'}))
-      for (let i = 0; i < this.fileList.length; i++) {
-        formData.append('files', this.fileList[i].raw)
+      if ((this.fileList.length === 0) || (this.formData.name === '') || (this.formData.introduction === '') || (this.formData.category === '')) {
+        this.$message.error('请填写完整的信息！')
+        return
       }
-      console.log(formData.get('formData'))
-      console.log(formData.get('files'))
+      let formData = new FormData()
+      formData.append('name', this.formData.name)
+      formData.append('category', this.formData.category)
+      formData.append('introduction', this.formData.introduction)
+      formData.append('file', this.fileList[0].raw)
+      uploadIngredient(formData).then(res => {
+        if (!res.data.status) this.$message.error(res.data.msg)
+        else {
+          this.$message.success(res.data.msg)
+          location.reload()
+        }
+      })
     },
     handleRemove () {
       this.fileList.pop()

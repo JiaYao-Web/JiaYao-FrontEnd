@@ -3,19 +3,19 @@
     <!--导航栏-->
     <NavBar/>
     <div>
-      <div class="title">分享菜单</div>
+      <div class="title">分享菜谱</div>
       <div class="post-container">
         <div class="wrap">
           <div class="post-box">
             <div class="box-title">
-              <i  class="category">菜单信息</i>
+              <i  class="category">菜谱信息</i>
             </div>
             <!--顶部进度条-->
             <div class="box-body">
               <div class="progress-bar">
                 <el-steps :active=active align-center>
-                  <el-step title="步骤1" description="上传菜单基本信息"></el-step>
-                  <el-step title="步骤2" description="上传菜单图片"></el-step>
+                  <el-step title="步骤1" description="上传菜谱基本信息"></el-step>
+                  <el-step title="步骤2" description="上传菜谱图片"></el-step>
                   <el-step title="步骤3" description="成功上传"></el-step>
                 </el-steps>
               </div>
@@ -25,17 +25,17 @@
                 <div v-show="active === 0">
                   <div class="info-title">请填写菜单的基本信息</div>
                   <el-form :label-position="labelPosition" label-width="300px" style="margin-top: 30px">
-                    <el-form-item label="菜单名称">
+                    <el-form-item label="菜品名称">
                       <el-input class="book-info-input" v-model="formData.name" clearable></el-input>
                     </el-form-item>
-                    <el-form-item label="菜单分类">
+                    <el-form-item label="菜品分类">
                       <el-input class="book-info-input" v-model="formData.category" clearable></el-input>
                     </el-form-item>
-                    <el-form-item label="菜单内容">
+                    <el-form-item label="所需食材">
                       <el-input class="book-info-input" v-model="formData.content" clearable type="textarea" :rows="3">
                       </el-input>
                     </el-form-item>
-                    <el-form-item label="菜单简介">
+                    <el-form-item label="步骤介绍">
                       <el-input class="book-info-input" v-model="formData.introduction" clearable type="textarea" :rows="3"></el-input>
                     </el-form-item>
                   </el-form>
@@ -47,9 +47,9 @@
                   <div>
                     <el-upload
                       list-type="picture-card" action="" :on-preview="handlePreview" :on-remove="handleRemove" :on-change = "handleChange" :before-remove="beforeRemove"
-                      multiple :limit="5" :auto-upload= "false" :file-list="fileList" style="margin-top: 50px" accept=".png,.jpg">
+                      multiple :limit="1" :auto-upload= "false" :file-list="fileList" style="margin-top: 50px" accept=".png,.jpg">
                       <el-button size="small" type="primary">点击上传</el-button>
-                      <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且最多上传五个文件</div>
+                      <div slot="tip" class="el-upload__tip">只能上传jpg/png文件</div>
                     </el-upload>
                   </div>
                   <el-button  @click="lastStep" style="margin-top: 50px">上一步</el-button>
@@ -78,6 +78,7 @@
 
 <script>
 import NavBar from '../../components/NavBar'
+import {uploadMenu} from '../../api/menuAPI'
 
 export default {
   name: 'UploadMenu',
@@ -99,6 +100,7 @@ export default {
     }
   },
   created () {
+    if (window.sessionStorage.getItem('MyAuthentication') === null) this.$router.push('/')
   },
   methods: {
     nextStep () {
@@ -108,13 +110,24 @@ export default {
       this.active--
     },
     submit () {
-      let formData = new FormData()
-      formData.append('formData', new Blob([JSON.stringify(this.formData)], {type: 'application/json'}))
-      for (let i = 0; i < this.fileList.length; i++) {
-        formData.append('files', this.fileList[i].raw)
+      if ((this.fileList.length === 0) || (this.formData.content === '') || (this.formData.name === '') || (this.formData.introduction === '') || (this.formData.category === '')) {
+        this.$message.error('请填写完整的信息！')
+        return
       }
-      console.log(formData.get('formData'))
-      console.log(formData.get('files'))
+      let formData = new FormData()
+      formData.append('name', this.formData.name)
+      formData.append('category', this.formData.category)
+      formData.append('introduction', this.formData.introduction)
+      formData.append('content', this.formData.content)
+      formData.append('file', this.fileList[0].raw)
+      uploadMenu(formData).then(res => {
+        console.log(res)
+        if (!res.data.status) this.$message.error(res.data.msg)
+        else {
+          this.$message.success(res.data.msg)
+          location.reload()
+        }
+      })
     },
     handleRemove () {
       this.fileList.pop()
