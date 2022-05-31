@@ -25,12 +25,37 @@
           <el-button type="success" @click="uploadIngredient">上传食材</el-button>
         </div>
         <!--商品信息-->
-        <!--没有收藏-->
+        <!--没有食材-->
         <div class="searchBar">
-          <el-empty v-if="favoriteList.length === 0" description="精选食材为空"></el-empty>
+          <el-empty v-if="ingredientList.length === 0" description="精选食材为空"></el-empty>
         </div>
-        <!--有收藏-->
-        <div v-if="favoriteList.length > 0" class="searchBar">
+        <!--有食材-->
+        <div v-if="ingredientList.length > 0" class="searchBar">
+          <div>
+            <div style="width: 100%;display: flex;flex-direction: row;flex-wrap: wrap">
+              <div v-for="(item, index) in ingredientList" :key="index" style="width: 25%">
+                <div style="margin-top: 20px">
+                  <el-card class="card">
+                    <div class="book-title">{{item.name}}</div>
+                    <div style="display: flex">
+                      <img :src="item.url" alt="这是一张图片" class="book-img">
+                      <div style="display: flex;margin-top: 10px;margin-left: 30px">
+                        <div style="margin-top: 55px" @click="goToCategory(item.category)">
+                          <div  v-if="item.category === '蔬菜'" class="arrow-line" v-bind:style="{ background: color[0]}">{{item.category}}</div>
+                          <div  v-if="item.category === '肉类'" class="arrow-line" v-bind:style="{ background: color[1]}">{{item.category}}</div>
+                          <div  v-if="item.category === '水产'" class="arrow-line" v-bind:style="{ background: color[2]}">{{item.category}}</div>
+                          <div  v-if="item.category === '豆乳蛋类'" class="arrow-line" v-bind:style="{ background: color[3]}">{{item.category}}</div>
+                          <div  v-if="item.category === '谷类'" class="arrow-line" v-bind:style="{ background: color[4]}">{{item.category}}</div>
+                          <div  v-if="item.category === '调味料'" class="arrow-line" v-bind:style="{ background: color[5]}">{{item.category}}</div>
+                        </div>
+                      </div>
+                    </div>
+                    <el-button style="margin-top: 20px" @click="goToIngredient(item.id)">查看详情</el-button>
+                  </el-card>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -39,21 +64,33 @@
 
 <script>
 import NavBar from '../../components/NavBar'
+import { getAllIngredient } from '../../api/ingredientAPI'
+
 export default {
   name: 'IngredientIndex',
   components: {NavBar},
   data () {
     return {
       introduction: '精选食材，让你的厨房有无限选择！',
-      favoriteList: []
+      ingredientList: [],
+      color: ['green', 'red', 'blue', 'gray', 'orange', 'brown']
     }
   },
   created () {
+    if (window.sessionStorage.getItem('MyAuthentication') === null) this.$router.push('/')
+    getAllIngredient().then(res => {
+      this.ingredientList = res.data
+    })
   },
   methods: {
     uploadIngredient () {
-      console.log('你好')
       this.$router.push('/uploadIngredient')
+    },
+    goToIngredient (id) {
+      this.$router.push(`/ingredient?id=${id}`)
+    },
+    goToCategory (category) {
+      this.$router.push(`/category?category=${category}`)
     }
   }
 }
@@ -137,5 +174,27 @@ export default {
 }
 .searchBar{
   margin-top: 20px;
+}
+.card{
+  width: 350px;
+  height: 270px;
+  margin-left: 20px
+}
+.book-title{
+  font-weight: bolder;
+}
+.book-img{
+  display: flex;
+  flex-direction: column;
+  margin-left: 80px;
+  margin-top: 10px;
+  width: 130px;
+  height: 150px;
+}
+.arrow-line {
+  position: relative;
+  width: 70px;
+  height: 20px;
+  color: #F9F0DA;
 }
 </style>

@@ -39,7 +39,7 @@
           </div>
           <div class="search-content">
             <div class="search-card">
-              <div v-for="(item , index) in commonSearchList" :key="index" style="width: 25%">
+              <div v-for="(item , index) in categoryList" :key="index" style="width: 25%">
                 <div style="margin-top: 20px">
                   <el-card class="search-card-item">
                     <router-link to="/" class="search-to-link">{{item.name}}</router-link>
@@ -59,8 +59,8 @@
             <div class="ingredient-card">
               <div v-for="(item , index) in ingredientList" :key="index" style="width: 20%">
                 <div style="margin-top: 20px">
-                  <div class="ingredient-card-item">
-                    <img :src="item.img" class="ingredient-img" alt=""/>
+                  <div class="ingredient-card-item" @click="goToIngredient(item.id)">
+                    <img :src="item.url" class="ingredient-img" alt=""/>
                     <router-link to="/" class="ingredient-name">{{item.name}}</router-link>
                   </div>
                 </div>
@@ -103,6 +103,8 @@
 import { swiperList } from '../../assets/Data/swiper'
 import NavBar from '../../components/NavBar'
 import BackToTop from '../../components/BackToTop'
+import { getAllIngredient } from '../../api/ingredientAPI'
+
 export default {
   name: 'home',
   components: {NavBar, BackToTop},
@@ -124,13 +126,43 @@ export default {
         // eslint-disable-next-line standard/object-curly-even-spacing
         {img: '', name: '', id: 3, fans: 100, follow: false }, {img: '', name: '', id: 4, fans: 100, follow: false }, {img: '', name: '', id: 5, fans: 100, follow: false }],
       // 经常搜索列表
-      commonSearchList: [{name: '小吃'}, {name: '主食'}, {name: '烘焙'}, {name: '饮品'}, {name: '凉菜'}, {name: '早餐'}, {name: '煎炸'}, {name: '粤菜'}],
+      categoryList: [{name: '小吃'}, {name: '主食'}, {name: '烘焙'}, {name: '饮品'}, {name: '凉菜'}, {name: '早餐'}, {name: '煎炸'}, {name: '粤菜'}],
       // 食材列表
-      ingredientList: [{img: require('@/assets/temp/potato.jpg'), name: '土豆'}, {img: '', name: '牛肉'}, {img: '', name: '鱼'}, {img: '', name: '白菜'}, {img: '', name: '茄子'}, {img: '', name: '鲍鱼'}, {img: '', name: '山药'}, {img: '', name: '柿子'}, {img: '', name: '羊肉'}, {img: '', name: '菊花'}]
+      ingredientList: []
     }
   },
   created () {
     if (window.sessionStorage.getItem('MyAuthentication') === null) this.$router.push('/')
+    // 获取菜谱
+    // 获取食材
+    getAllIngredient().then(res => {
+      console.log(res)
+      if (res.data.length <= 10) this.ingredientList = res.data
+      else {
+        this.ingredientList = this.getRandomArrayElements(res.data, 10)
+      }
+    })
+    // 获取用户
+  },
+  methods: {
+    getRandomArrayElements (arr, count) {
+      let shuffled = arr.slice(0)
+      let i = arr.length
+      let min = i - count
+      let temp = ''
+      let index = '' // 只是声明变量的方式, 也可以分开写
+      while (i-- > min) {
+        // console.log(i);
+        index = Math.floor((i + 1) * Math.random()) // 这里的+1 是因为上面i--的操作  所以要加回来
+        temp = shuffled[index] // 即值交换
+        shuffled[index] = shuffled[i]
+        shuffled[i] = temp
+      }
+      return shuffled.slice(min)
+    },
+    goToIngredient (id) {
+      this.$router.push(`/ingredient?id=${id}`)
+    }
   }
 }
 </script>

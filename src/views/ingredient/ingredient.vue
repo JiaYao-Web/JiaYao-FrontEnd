@@ -46,6 +46,8 @@
 
 <script>
 import NavBar from '../../components/NavBar'
+import {getIngredientDetail} from '../../api/ingredientAPI'
+
 export default {
   name: 'Ingredient',
   components: {NavBar},
@@ -54,10 +56,20 @@ export default {
       ingredient: {introduction: '巨好吃的食材', name: '西红柿', category: '蔬菜', image: require('@/assets/temp/tomato.jpg'), favorite: 2, like: 2},
       ingredientList: [],
       favoriteVisible: false,
-      likeVisible: false
+      likeVisible: false,
+      id: 1
     }
   },
   created () {
+    if (window.sessionStorage.getItem('MyAuthentication') === null) this.$router.push('/')
+    let id = 0
+    if (this.$route.query.id === undefined) id = 1
+    else id = this.$route.query.id
+    this.id = id
+    const param = {ingredientId: id}
+    getIngredientDetail(param).then(res => {
+      console.log(res)
+    })
   },
   methods: {
   }
