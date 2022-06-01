@@ -27,8 +27,8 @@
                 <div style="font-size: 14px;margin-top: 5px">{{followList.length}}</div>
               </div>
               <div style="margin-top: 10px">
-                <el-button @click="changeActive('fourth')">收藏</el-button>
-                <div style="font-size: 14px;margin-top: 5px">{{favoriteList.length}}</div>
+                <el-button @click="$router.push('/favorite')">收藏</el-button>
+                <div style="font-size: 14px;margin-top: 5px">{{favoriteNumber}}</div>
               </div>
             </div>
             <div class="book-user-info">
@@ -70,14 +70,6 @@
             <div v-if="followList.length > 0" class="searchBar">
             </div>
           </el-tab-pane>
-          <!--收藏-->
-          <el-tab-pane label="收藏" name="fourth">
-            <div class="searchBar">
-              <el-empty v-if="favoriteList.length === 0" description="暂时没有收藏"></el-empty>
-            </div>
-            <div v-if="favoriteList.length > 0" class="searchBar">
-            </div>
-          </el-tab-pane>
         </el-tabs>
       </div>
     </div>
@@ -96,7 +88,7 @@ export default {
       menuList: [],
       ingredientList: [],
       followList: [],
-      favoriteList: [],
+      favoriteNumber: 0,
       activeName: 'first'
     }
   },

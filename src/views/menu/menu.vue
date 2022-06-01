@@ -11,7 +11,7 @@
           </div>
           <div class="book-info">
             <div class="book-name">
-              <div class="tag1">{{menu.category}}</div>{{menu.name}}
+              <div class="tag1" @click="goToCategory(menu.category)">{{menu.category}}</div>{{menu.name}}
               <div class="el-icon-star-on" v-show="favoriteVisible" @click="confirmFavorite(false)"></div>
               <div class="el-icon-star-off" v-show="!favoriteVisible" @click="confirmFavorite(true)"></div>
               <img src="../../assets/icons/like_fill.png" style="width: 32px;height: 32px" v-show="likeVisible" @click="confirmLike(false)" alt="点赞图片"/>
@@ -79,6 +79,9 @@ export default {
     })
   },
   methods: {
+    goToCategory (category) {
+      this.$router.push(`/category?category=${category}`)
+    },
     confirmFavorite (value) {
       if (value) {
         const param = {id: this.id, confirm: true}

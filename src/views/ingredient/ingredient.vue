@@ -11,7 +11,7 @@
           </div>
           <div class="book-info">
             <div class="book-name">
-              <div class="tag1">{{ingredient.category}}</div>{{ingredient.name}}
+              <div class="tag1" @click="goToCategory(ingredient.category)">{{ingredient.category}}</div>{{ingredient.name}}
               <div class="el-icon-star-on" v-show="favoriteVisible" @click="confirmFavorite(false)"></div>
               <div class="el-icon-star-off" v-show="!favoriteVisible" @click="confirmFavorite(true)"></div>
               <img src="../../assets/icons/like_fill.png" style="width: 32px;height: 32px" v-show="likeVisible" @click="confirmLike(false)" alt="点赞图片"/>
