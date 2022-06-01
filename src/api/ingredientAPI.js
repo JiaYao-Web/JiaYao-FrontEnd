@@ -27,3 +27,23 @@ export function getIngredientDetail (param) {
     data: param
   })
 }
+
+// 收藏食材
+export function favoriteIngredient (param) {
+  return request({
+    url: '/Ingredient/favoriteIngredient',
+    method: 'post',
+    headers: { 'Content-Type': 'application/json' },
+    data: param
+  })
+}
+
+// 点赞食材
+export function likeIngredient (param) {
+  return request({
+    url: '/Ingredient/likeIngredient',
+    method: 'post',
+    headers: { 'Content-Type': 'application/json' },
+    data: param
+  })
+}

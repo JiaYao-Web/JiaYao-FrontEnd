@@ -3,7 +3,7 @@
     <!--顶部导航-->
     <NavBar/>
     <div style="margin-top: 80px">
-      <div class="book">
+      <div class="book" v-loading="loading" element-loading-text="加载菜谱中...">
         <!--商品图标-->
         <div class="book-top-card">
           <div class="book-img-wrap">
@@ -12,32 +12,31 @@
           <div class="book-info">
             <div class="book-name">
               <div class="tag1">{{menu.category}}</div>{{menu.name}}
-              <div class="el-icon-star-on" v-show="favoriteVisible"></div>
-              <div class="el-icon-star-off" v-show="!favoriteVisible"></div>
-              <img src="../../assets/icons/like_fill.png" style="width: 32px;height: 32px" v-show="likeVisible" alt="点赞图片"/>
-              <img src="../../assets/icons/like.png" style="width: 32px;height: 32px" v-show="!likeVisible" alt="点赞图片"/>
+              <div class="el-icon-star-on" v-show="favoriteVisible" @click="confirmFavorite(false)"></div>
+              <div class="el-icon-star-off" v-show="!favoriteVisible" @click="confirmFavorite(true)"></div>
+              <img src="../../assets/icons/like_fill.png" style="width: 32px;height: 32px" v-show="likeVisible" @click="confirmLike(false)" alt="点赞图片"/>
+              <img src="../../assets/icons/like.png" style="width: 32px;height: 32px" v-show="!likeVisible" @click="confirmLike(true)" alt="点赞图片"/>
             </div>
             <div class="book-user-info">
               <div class="book-create-time">
-                <span>共{{menu.favorite}}人收藏</span>
-                <span style="margin-left: 20px">共{{menu.like}}人点赞</span>
+                <span>共{{menu.favoriteNumber}}人收藏</span>
+                <span style="margin-left: 20px">共{{menu.likeNumber}}人点赞</span>
               </div>
             </div>
             <div>
               <el-card style="margin-top: 10px;max-height: 140px;background: transparent;text-justify: inter-ideograph;overflow: auto;">
-                <div style="color: #6A5ACD">简介</div>
-                <div>{{menu.introduction}}</div>
+                <div style="color: #6A5ACD">所需食材</div>
+                <div>{{menu.content}}</div>
               </el-card>
             </div>
           </div>
         </div>
-        <!--商品信息-->
-        <!--没有收藏-->
         <div class="searchBar">
-          <el-empty v-if="menuList.length === 0" description="暂时没有菜谱信息"></el-empty>
-        </div>
-        <!--有收藏-->
-        <div v-if="menuList.length > 0" class="searchBar">
+          <div style="margin-left: 300px">
+            <el-table :data="introductionList" stripe style="width: 80%" :header-cell-style="{'text-align':'center'}" :cell-style="{'margin-left':'200px'}">
+              <el-table-column prop="step" label="制作步骤"></el-table-column>
+            </el-table>
+          </div>
         </div>
       </div>
     </div>
@@ -46,20 +45,86 @@
 
 <script>
 import NavBar from '../../components/NavBar'
+import { getMenuDetail, favoriteMenu, likeMenu } from '../../api/menuAPI'
+
 export default {
   name: 'Menu',
   components: {NavBar},
   data () {
     return {
-      menu: {introduction: '巨好吃的一道菜', name: '西红柿炒鸡蛋', category: '家常菜', image: require('@/assets/temp/xihongshichaodan.jpg'), favorite: 2, like: 2},
-      menuList: [],
+      menu: {},
       favoriteVisible: false,
-      likeVisible: false
+      likeVisible: false,
+      loading: true,
+      introductionList: [],
+      id: 3
     }
   },
   created () {
+    if (window.sessionStorage.getItem('MyAuthentication') === null) this.$router.push('/')
+    let id = 0
+    if (this.$route.query.id === undefined) id = 1
+    else id = this.$route.query.id
+    this.id = id
+    const param = {menuId: id}
+    getMenuDetail(param).then(res => {
+      this.loading = false
+      this.menu = res.data
+      this.favoriteVisible = res.data.ifFavorite
+      this.likeVisible = res.data.ifLike
+      const list = res.data.introduction.split('\r\n')
+      for (let i = 0; i < list.length; i++) {
+        this.introductionList.push({step: list[i]})
+      }
+    })
   },
   methods: {
+    confirmFavorite (value) {
+      if (value) {
+        const param = {id: this.id, confirm: true}
+        favoriteMenu(param).then(res => {
+          if (!res.data.status) this.$message.error(res.data.msg)
+          else {
+            this.favoriteVisible = true
+            this.menu.favoriteNumber++
+            this.$message.success(res.data.msg)
+          }
+        })
+      } else {
+        const param = {id: this.id, confirm: false}
+        favoriteMenu(param).then(res => {
+          if (!res.data.status) this.$message.error(res.data.msg)
+          else {
+            this.favoriteVisible = false
+            this.menu.favoriteNumber--
+            this.$message.success(res.data.msg)
+          }
+        })
+      }
+    },
+    confirmLike (value) {
+      if (value) {
+        const param = {id: this.id, confirm: true}
+        likeMenu(param).then(res => {
+          if (!res.data.status) this.$message.error(res.data.msg)
+          else {
+            this.likeVisible = true
+            this.menu.likeNumber++
+            this.$message.success(res.data.msg)
+          }
+        })
+      } else {
+        const param = {id: this.id, confirm: false}
+        likeMenu(param).then(res => {
+          if (!res.data.status) this.$message.error(res.data.msg)
+          else {
+            this.likeVisible = false
+            this.menu.likeNumber--
+            this.$message.success(res.data.msg)
+          }
+        })
+      }
+    }
   }
 }
 </script>

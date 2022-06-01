@@ -29,7 +29,9 @@
                       <el-input class="book-info-input" v-model="formData.name" clearable></el-input>
                     </el-form-item>
                     <el-form-item label="菜品分类">
-                      <el-input class="book-info-input" v-model="formData.category" clearable></el-input>
+                      <el-select class="book-info-input" v-model="formData.category" placeholder="请选择">
+                        <el-option  v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                      </el-select>
                     </el-form-item>
                     <el-form-item label="所需食材">
                       <el-input class="book-info-input" v-model="formData.content" clearable type="textarea" :rows="3">
@@ -94,6 +96,22 @@ export default {
         content: '',
         introduction: ''
       },
+      options: [{
+        value: '热菜',
+        label: '热菜'
+      }, {
+        value: '凉菜',
+        label: '凉菜'
+      }, {
+        value: '主食',
+        label: '主食'
+      }, {
+        value: '汤',
+        label: '汤'
+      }, {
+        value: '其他',
+        label: '其他'
+      }],
       // 步骤二：上传图片
       imageUrl: '',
       fileList: []

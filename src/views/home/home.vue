@@ -20,9 +20,9 @@
         <div v-for="(item , index) in recommendMenuList" :key="index" style="width: 25%">
           <div style="margin-top: 20px">
             <el-card class="recommend-card" >
-              <img :src="item.img" style="width: 100%;height: 160px;border: solid;color: orange;border-radius: 20px" alt=""/>
-              <div class="recommend-card-img">{{item.name}}</div>
-              <div class="recommend-card-author">By {{item.author}}</div>
+              <img @click="goToMenu(item.menuId)" :src="item.menuImage" style="width: 100%;height: 160px;border: solid;color: orange;border-radius: 20px" alt=""/>
+              <div class="recommend-card-img">{{item.menuName}}</div>
+              <div @click="goToUser(item.userId)" class="recommend-card-author">By {{item.userName}}</div>
             </el-card>
           </div>
         </div>
@@ -104,6 +104,7 @@ import { swiperList } from '../../assets/Data/swiper'
 import NavBar from '../../components/NavBar'
 import BackToTop from '../../components/BackToTop'
 import { getAllIngredient } from '../../api/ingredientAPI'
+import { getAllMenu } from '../../api/menuAPI'
 
 export default {
   name: 'home',
@@ -119,7 +120,7 @@ export default {
       // 轮播图
       swiperList: swiperList,
       // 推荐菜单列表
-      recommendMenuList: [{img: require('@/assets/temp/potato-si.jpg'), name: '最简单下饭的酸辣土豆丝', author: 'Magic-Shroom'}, {img: '', name: '', author: ''}, {img: '', name: '', author: ''}, {img: '', name: '', author: ''}, {img: '', name: '', author: ''}, {img: '', name: '', author: ''}, {img: '', name: '', author: ''}, {img: '', name: '', author: ''}],
+      recommendMenuList: [],
       // eslint-disable-next-line standard/object-curly-even-spacing
       // 美食达人列表
       expertUserList: [{img: require('@/assets/temp/magic_shroom.png'), name: 'Magic_shroom', id: 0, fans: 100, follow: true}, {img: '', name: '', id: 1, fans: 100, follow: false}, { img: '', name: '', id: 2, fans: 100, follow: false },
@@ -134,9 +135,15 @@ export default {
   created () {
     if (window.sessionStorage.getItem('MyAuthentication') === null) this.$router.push('/')
     // 获取菜谱
+    getAllMenu().then(res => {
+      if (res.data.length <= 8) this.recommendMenuList = res.data
+      else {
+        this.menuLoading = false
+        this.recommendMenuList = this.getRandomArrayElements(res.data, 8)
+      }
+    })
     // 获取食材
     getAllIngredient().then(res => {
-      console.log(res)
       if (res.data.length <= 10) this.ingredientList = res.data
       else {
         this.ingredientList = this.getRandomArrayElements(res.data, 10)
@@ -152,7 +159,6 @@ export default {
       let temp = ''
       let index = '' // 只是声明变量的方式, 也可以分开写
       while (i-- > min) {
-        // console.log(i);
         index = Math.floor((i + 1) * Math.random()) // 这里的+1 是因为上面i--的操作  所以要加回来
         temp = shuffled[index] // 即值交换
         shuffled[index] = shuffled[i]
@@ -162,6 +168,12 @@ export default {
     },
     goToIngredient (id) {
       this.$router.push(`/ingredient?id=${id}`)
+    },
+    goToMenu (id) {
+      this.$router.push(`/menu?id=${id}`)
+    },
+    goToUser (id) {
+      this.$router.push(`/user?id=${id}`)
     }
   }
 }
