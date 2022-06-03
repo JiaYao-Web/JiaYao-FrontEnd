@@ -28,10 +28,8 @@
         </div>
       </div>
     </div>
-    <!--大家都在搜、食材、用户推荐-->
     <div style="display: flex">
       <div style="margin-top: 20px;width: 71%">
-        <!--大家都在搜-->
         <div>
           <div class="recommend-title">
             <div class="choice-title">热门分类</div>
@@ -73,19 +71,19 @@
       <div style="margin-left: 32px;width: 21%">
         <div class="expert-box">
           <div class="expert-title">美食达人</div>
-          <router-link class="expert-link" to="/">更多 ></router-link>
+          <router-link class="expert-link" to="/allUser">更多 ></router-link>
         </div>
         <div class="expert-content">
           <div>
-            <el-card v-for="(item, index) in expertUserList" :key="index" style="height: 60px;margin-top: 15px">
+            <el-card v-for="(item, index) in userList" :key="index" style="height: 60px;margin-top: 15px">
               <div style="display: flex">
-                <img :src="item.img" class="expert-img" alt="用户"/>
-                <div style="margin-left: 15px">
+                <img :src="item.image" class="expert-img" alt="用户" @click="goToUser(item.id)"/>
+                <div style="margin-left: 15px;min-width: 100px">
                   <div class="expert-name">{{item.name}}</div>
-                  <div class="expert-fans">{{item.fans}}粉丝</div>
+                  <div class="expert-fans">{{item.fanNumber}}粉丝</div>
                 </div>
-                <el-button v-show="item.follow === false" class="expert-button">关注 +</el-button>
-                <el-button v-show="item.follow === true" class="expert-button">已关注 √</el-button>
+                <el-button v-show="!item.isMyself && !item.isFollow" class="expert-button" @click="follow(item.id)">关注 +</el-button>
+                <el-button v-show="!item.isMyself && item.isFollow" class="expert-button" @click="unfollow(item.id)">已关注 √</el-button>
               </div>
             </el-card>
           </div>
@@ -105,6 +103,7 @@ import NavBar from '../../components/NavBar'
 import BackToTop from '../../components/BackToTop'
 import { getAllIngredient } from '../../api/ingredientAPI'
 import { getAllMenu } from '../../api/menuAPI'
+import {getAllUserHome} from '../../api/followApi'
 
 export default {
   name: 'home',
@@ -123,9 +122,7 @@ export default {
       recommendMenuList: [],
       // eslint-disable-next-line standard/object-curly-even-spacing
       // 美食达人列表
-      expertUserList: [{img: require('@/assets/temp/magic_shroom.png'), name: 'Magic_shroom', id: 0, fans: 100, follow: true}, {img: '', name: '', id: 1, fans: 100, follow: false}, { img: '', name: '', id: 2, fans: 100, follow: false },
-        // eslint-disable-next-line standard/object-curly-even-spacing
-        {img: '', name: '', id: 3, fans: 100, follow: false }, {img: '', name: '', id: 4, fans: 100, follow: false }, {img: '', name: '', id: 5, fans: 100, follow: false }],
+      userList: [],
       // 经常搜索列表
       categoryList: [{name: '小吃'}, {name: '主食'}, {name: '烘焙'}, {name: '饮品'}, {name: '凉菜'}, {name: '早餐'}, {name: '煎炸'}, {name: '粤菜'}],
       // 食材列表
@@ -150,6 +147,13 @@ export default {
       }
     })
     // 获取用户
+    getAllUserHome().then(res => {
+      if (res.data.length <= 6) this.userList = res.data
+      else {
+        this.userList = this.getRandomArrayElements(res.data, 6)
+      }
+    })
+    // 获取分类
   },
   methods: {
     getRandomArrayElements (arr, count) {
@@ -174,6 +178,12 @@ export default {
     },
     goToUser (id) {
       this.$router.push(`/user?id=${id}`)
+    },
+    follow (id) {
+
+    },
+    unfollow (id) {
+
     }
   }
 }

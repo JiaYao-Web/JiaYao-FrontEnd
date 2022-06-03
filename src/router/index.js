@@ -89,6 +89,11 @@ export default new Router({
       path: '/userInfo',
       name: 'UserInfo',
       component: () => import('@/views/userInfo/userInfo')
+    },
+    {
+      path: '/allUser',
+      name: 'AllUser',
+      component: () => import('@/views/follow/allUsers')
     }
   ]
 })
