@@ -82,8 +82,8 @@
                   <div class="expert-name">{{item.name}}</div>
                   <div class="expert-fans">{{item.fanNumber}}粉丝</div>
                 </div>
-                <el-button v-show="!item.isMyself && !item.isFollow" class="expert-button" @click="follow(item.id)">关注 +</el-button>
-                <el-button v-show="!item.isMyself && item.isFollow" class="expert-button" @click="unfollow(item.id)">已关注 √</el-button>
+                <el-button v-show="!item.isMyself && !item.ifFollow" class="expert-button" @click="follow(item.id)">关注 +</el-button>
+                <el-button v-show="!item.isMyself && item.ifFollow" class="expert-button" @click="unfollow(item.id)">已关注 √</el-button>
               </div>
             </el-card>
           </div>
@@ -103,7 +103,7 @@ import NavBar from '../../components/NavBar'
 import BackToTop from '../../components/BackToTop'
 import { getAllIngredient } from '../../api/ingredientAPI'
 import { getAllMenu } from '../../api/menuAPI'
-import {getAllUserHome} from '../../api/followApi'
+import {getAllUserHome, followUser} from '../../api/followApi'
 
 export default {
   name: 'home',
@@ -148,6 +148,7 @@ export default {
     })
     // 获取用户
     getAllUserHome().then(res => {
+      console.log(res)
       if (res.data.length <= 6) this.userList = res.data
       else {
         this.userList = this.getRandomArrayElements(res.data, 6)
@@ -180,10 +181,24 @@ export default {
       this.$router.push(`/user?id=${id}`)
     },
     follow (id) {
-
+      const param = {id: id.toString(), confirm: true}
+      followUser(param).then(res => {
+        if (!res.data.status) this.$message.error(res.data.msg)
+        else {
+          this.$message.success(res.data.msg)
+          location.reload()
+        }
+      })
     },
     unfollow (id) {
-
+      const param = {id: id.toString(), confirm: false}
+      followUser(param).then(res => {
+        if (!res.data.status) this.$message.error(res.data.msg)
+        else {
+          this.$message.success(res.data.msg)
+          location.reload()
+        }
+      })
     }
   }
 }

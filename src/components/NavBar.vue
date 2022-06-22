@@ -91,6 +91,7 @@ export default {
     },
     goToUser () {
       this.$router.push(`/user?id=${this.user.userId}`)
+      if (this.$route.path === '/user') location.reload()
     },
     goToUserInfo () {
       this.$router.push('/userInfo')
