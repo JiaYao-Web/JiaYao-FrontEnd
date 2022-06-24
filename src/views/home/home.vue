@@ -33,14 +33,13 @@
         <div>
           <div class="recommend-title">
             <div class="choice-title">热门分类</div>
-            <router-link class="search-link" to="/category">更多 ></router-link>
           </div>
           <div class="search-content">
             <div class="search-card">
               <div v-for="(item , index) in categoryList" :key="index" style="width: 25%">
                 <div style="margin-top: 20px">
                   <el-card class="search-card-item">
-                    <router-link to="/" class="search-to-link">{{item.name}}</router-link>
+                    <div @click="goToCategory(item.name)" class="search-to-link">{{item.name}}</div>
                   </el-card>
                 </div>
               </div>
@@ -48,7 +47,7 @@
           </div>
         </div>
         <!--热门食材-->
-        <div style="margin-top: 30px">
+        <div style="margin-top: 70px">
           <div class="recommend-title">
             <div class="ingredient-title">热门食材</div>
             <router-link class="ingredient-link" to="/ingredientIndex">更多 ></router-link>
@@ -124,7 +123,8 @@ export default {
       // 美食达人列表
       userList: [],
       // 经常搜索列表
-      categoryList: [{name: '小吃'}, {name: '主食'}, {name: '烘焙'}, {name: '饮品'}, {name: '凉菜'}, {name: '早餐'}, {name: '煎炸'}, {name: '粤菜'}],
+      categoryList: [{name: '热菜'}, {name: '主食'}, {name: '凉菜'}, {name: '汤'}, {name: '蔬菜'}, {name: '肉类'}, {name: '水产'}, {name: '谷类'},
+        {name: '豆乳蛋类'}, {name: '调味料'}],
       // 食材列表
       ingredientList: []
     }
@@ -179,6 +179,9 @@ export default {
     },
     goToUser (id) {
       this.$router.push(`/user?id=${id}`)
+    },
+    goToCategory (category) {
+      this.$router.push(`/category?category=${category}`)
     },
     follow (id) {
       const param = {id: id.toString(), confirm: true}

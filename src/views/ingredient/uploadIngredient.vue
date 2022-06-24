@@ -99,7 +99,7 @@ export default {
         label: '肉类'
       }, {
         value: '水产',
-        label: '肉类'
+        label: '水产'
       }, {
         value: '豆乳蛋类',
         label: '豆乳蛋类'

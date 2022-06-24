@@ -10,7 +10,7 @@
     <div class="search bar">
       <form style="z-index: 1000;">
         <input v-model="input" type="text" placeholder="请输入您要搜索的内容...">
-        <button type="submit" class="fa" @click="search"></button>
+        <button type="submit" class="fa" @click="search(input)"></button>
       </form>
     </div>
   </div>
@@ -27,9 +27,9 @@ export default {
     }
   },
   methods: {
-    search () {
+    search (input) {
       if (this.input === '') location.reload()
-      else this.$router.push('/searchDetail')
+      else this.$router.push(`/searchDetail?detail=${input}`)
     }
   }
 }
